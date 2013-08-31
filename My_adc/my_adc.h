@@ -10,5 +10,6 @@
 
 void My_ADC_GPIO_Configuration(void);
 void ADC1_Configuration(void);
+void AD_test(u8 data);
 
 #endif /* MY_ADC_H_ */

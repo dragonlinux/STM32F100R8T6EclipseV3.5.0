@@ -248,7 +248,8 @@ void SPI2_master_SPI1_slave(void)
 	/* 打印试验结果信息 ---------------------------------------------------------------------------------------------*/
 
 }
-void RCC_Configuration(void)
+
+void SPI_RCC_Configuration(void)
 {
 
 	/* 打开 SPI2 时钟 */
@@ -257,15 +258,20 @@ void RCC_Configuration(void)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_USART1 | RCC_APB2Periph_SPI1, ENABLE);
 }
 
+/***********************************************
+ * 在同一块Discovery的开发板上
+ * SPI1连接SPI2，相互胡传数据。
+ *
+ **********************************************/
 void SPI_test(void)
 {
 	/* 设置系统时钟 */
-	RCC_Configuration();
+	SPI_RCC_Configuration();
 
 	/* 设置 GPIO 端口 */
 	GPIO_Configuration();
 
-	/* 设置 SPI */
+	/* 设置 SPI void SPI_test(void)*/
 	SPI_Configuration();
 
 	SPI1_master_SPI2_slave();
