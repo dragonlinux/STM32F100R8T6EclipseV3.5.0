@@ -23,21 +23,15 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
-
-/** @addtogroup STM32F10x_StdPeriph_Examples
- * @{
- */
-
-/** @addtogroup GPIO_IOToggle
- * @{
- */
-
+#include "My_delay/my_delay.h"
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
+
+extern void BufferWrite(void);
 
 /******************************************************************************/
 /*            Cortex-M3 Processor Exceptions Handlers                         */
@@ -138,6 +132,7 @@ void PendSV_Handler(void)
  */
 void SysTick_Handler(void)
 {
+	TimingDelay_Decrement();
 }
 
 /******************************************************************************/
@@ -147,37 +142,94 @@ void SysTick_Handler(void)
 /*  file (startup_stm32f10x_xx.s).                                            */
 /******************************************************************************/
 
-/**
- * @brief  This function handles PPP interrupt request.
- * @param  None
- * @retval None
- */
-//void PPP_IRQHandler(void)
-//{
-//}
-//串口中断
-void USART1_IRQHandler()
-{
+/*******************************************************************************
+ * Function Name  : USART1_IRQHandler
+ * Description    : This function handles USART1 global interrupt request.
+ * Input          : None
+ * Output         : None
+ * Return         : None
+ *******************************************************************************/
 
+void USART1_IRQHandler(void)
+{
+	/****************************************************************/
+	if (USART_GetFlagStatus(USART1, USART_FLAG_ORE ) != RESET)
+	{
+		USART_ReceiveData(USART1 ); //进行空读操作，目的是清除ORE位
+	}
+	if (USART_GetITStatus(USART1, USART_IT_RXNE ) != RESET)
+	{
+		BufferWrite(); //将接收到的数据写入缓冲
+		USART_ClearITPendingBit(USART1, USART_IT_RXNE );
+	}
+
+	/******************************************************************/
+//	if (USART_GetITStatus(USART1, USART_IT_RXNE ) != RESET)
+//	{
+//		USART_ITConfig(USART1, USART_IT_TXE, DISABLE); //关闭发送中断
+//	}
+//	LedPB1 = USART_ReceiveData(USART1 );
+}
+void USART2_IRQHandler(void)
+{
+//	if (USART_GetITStatus(USART2, USART_IT_TXE ) != RESET)
+//	{
+//		USART_ITConfig(USART2, USART_IT_TXE, DISABLE); //关闭发送中断
+//	}
 }
 
-void USART2_IRQHandler()
+void TIM2_IRQHandler(void)
 {
-
+	GPIO_WriteBit(GPIOC, GPIO_Pin_9, (BitAction) !GPIO_ReadOutputDataBit(GPIOC, GPIO_Pin_9 ));
+//	if (GPIO_ReadOutputDataBit(GPIOC, GPIO_Pin_9 ) == 0)
+//	{
+//		GPIO_SetBits(GPIOC, GPIO_Pin_9 );
+//	}
+//	else
+//	{
+//		GPIO_ResetBits(GPIOC, GPIO_Pin_9 );
+//	}
+	TIM_ClearFlag(TIM2, TIM_FLAG_Update );
 }
 
-void USART3_IRQHandler()
+void TIM3_IRQHandler(void)
 {
-
+	GPIO_WriteBit(GPIOC, GPIO_Pin_8, (BitAction) !GPIO_ReadOutputDataBit(GPIOC, GPIO_Pin_8 ));
+//	if (GPIO_ReadOutputDataBit(GPIOC, GPIO_Pin_9 ) == 0)
+//	{
+//		GPIO_SetBits(GPIOC, GPIO_Pin_9 );
+//	}
+//	else
+//	{
+//		GPIO_ResetBits(GPIOC, GPIO_Pin_9 );
+//	}
+	TIM_ClearFlag(TIM3, TIM_FLAG_Update );
 }
 
+void EXTI0_IRQHandler(void)
+{
+	if (EXTI_GetITStatus(EXTI_Line0 ) != RESET)
+	{
+		/* Clear the  EXTI line 0 pending bit */
+		EXTI_ClearITPendingBit(EXTI_Line0 );
+		/********************** do what you want *****************************/
+		/* Toggle LED1 */
+		GPIO_WriteBit(GPIOB, GPIO_Pin_0, (BitAction) !GPIO_ReadOutputDataBit(GPIOB, GPIO_Pin_0 ));
+		/**********************************************************************/
+	}
+}
 
-/**
- * @}
- */
-
-/**
- * @}
- */
+void EXTI9_5_IRQHandler(void)
+{
+	if (EXTI_GetITStatus(EXTI_Line9 ) != RESET)
+	{
+		/* Clear the  EXTI line 9 pending bit */
+		EXTI_ClearITPendingBit(EXTI_Line9 );
+		/********************** do what you want *****************************/
+		/* Toggle LED2 */
+		GPIO_WriteBit(GPIOB, GPIO_Pin_2, (BitAction) !GPIO_ReadOutputDataBit(GPIOB, GPIO_Pin_2 ));
+		/**********************************************************************/
+	}
+}
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
