@@ -41,7 +41,7 @@ vu8 k = 0, i = 0; /* 循环计数变量 */
  * 返回值        : 无
  *******************************************************************************/
 
-void GPIO_Configuration(void)
+void SPI_GPIO_Configuration(void)
 {
 	/* 定义 GPIO 初始化结构体 GPIO_InitStructure */
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -164,6 +164,7 @@ void SPI1_master_SPI2_slave(void)
 	/* 打印试验结果信息 ---------------------------------------------------------------------------------------------*/
 
 }
+
 void clean(void)
 {
 	Tx_Idx = 0;
@@ -269,7 +270,7 @@ void SPI_test(void)
 	SPI_RCC_Configuration();
 
 	/* 设置 GPIO 端口 */
-	GPIO_Configuration();
+	SPI_GPIO_Configuration();
 
 	/* 设置 SPI void SPI_test(void)*/
 	SPI_Configuration();

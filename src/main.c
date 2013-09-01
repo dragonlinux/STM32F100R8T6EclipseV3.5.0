@@ -53,8 +53,10 @@ int main(void)
 
 	printf("ok home\n");
 
-	AD_test(data);
 	SPI_test();
+
+	AD_test(data);
+
 }
 
 #ifdef  USE_FULL_ASSERT
